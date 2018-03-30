@@ -1,0 +1,25 @@
+name: bvae-tf
+channels:
+- defaults
+dependencies:
+- certifi=2018.1.18=py35_0
+- pip=9.0.1=py35_5
+- python=3.5.4=h1357f44_23
+- setuptools=39.0.1=py35_0
+- vc=14=h0510ff6_3
+- vs2015_runtime=14.0.25123=3
+- wheel=0.30.0=py35h38a90bc_1
+- wincertstore=0.2=py35hfebbdb8_0
+- pip:
+  - bleach==1.5.0
+  - enum34==1.1.6
+  - html5lib==0.9999999
+  - markdown==2.6.11
+  - numpy==1.14.2
+  - protobuf==3.5.2.post1
+  - six==1.11.0
+  - tensorflow-gpu==1.4.0
+  - tensorflow-tensorboard==0.4.0
+  - werkzeug==0.14.1
+prefix: C:\Users\alec0\Anaconda3\envs\bvae-tf
+
