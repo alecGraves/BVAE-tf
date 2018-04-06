@@ -51,9 +51,9 @@ class Darknet19Encoder(Architecture):
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     '''
     def __init__(self, inputShape=(256, 256, 3), batchSize=1,
-                 latentSize=1000, latentConstraints='bvae', latentCapacity=0):
+                 latentSize=1000, latentConstraints='bvae', beta=100, capacity=0):
         self.latentConstraints = latentConstraints
-        self.latentCapacity = latentCapacity
+        self.latentCapacity = capacity
         super().__init__(inputShape, batchSize, latentSize)
 
     def Build(self):

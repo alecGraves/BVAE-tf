@@ -16,10 +16,9 @@ dependencies:
   - html5lib==0.9999999
   - markdown==2.6.11
   - numpy==1.14.2
+  - pillow==5.1.0
   - protobuf==3.5.2.post1
   - six==1.11.0
   - tensorflow-gpu==1.4.0
   - tensorflow-tensorboard==0.4.0
   - werkzeug==0.14.1
-prefix: C:\Users\alec0\Anaconda3\envs\bvae-tf
-

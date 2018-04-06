@@ -84,7 +84,8 @@ class SampleLayer(Layer):
                                 - K.square(mean)
                                 - K.exp(stddev), axis=-1)
             # use beta to force less usage of vector space:
-            latent_loss = self.beta * K.abs(latent_loss - self.capacity)
+            # also try to use <capacity> dimensions of the space:
+            latent_loss = self.beta * K.abs(latent_loss - self.capacity/self.shape.as_list()[1])
             self.add_loss(latent_loss, x)
         if self.regularizer == 'vae':
             # kl divergence:
