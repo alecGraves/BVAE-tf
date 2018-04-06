@@ -6,12 +6,14 @@ created by shadySource
 
 THE UNLICENSE
 '''
-# import tensorflow as tf
+import tensorflow as tf
 from tensorflow.python.keras import Input
 from tensorflow.python.keras.layers import (InputLayer, Conv2D, Conv2DTranspose, 
             BatchNormalization, LeakyReLU, MaxPool2D, UpSampling2D, 
             Reshape, GlobalAveragePooling2D)
 from tensorflow.python.keras.models import Model
+
+from model_utils import ConvBnLRelu, SampleLayer
 
 class Architecture(object):
     '''
@@ -36,15 +38,22 @@ class Architecture(object):
         self.model = self.Build()
 
     def Build(self):
-        raise NotImplementedError('architecture must implement build function')
+        raise NotImplementedError('architecture must implement Build function')
 
 
 class Darknet19Encoder(Architecture):
     '''
-    a simple, fully convolutional architecture inspried by pjreddie's darknet architecture
+    This encoder predicts distributions then randomly samples them.
+    Regularization may be applied to the latent space output
+
+    a simple, fully convolutional architecture inspried by 
+        pjreddie's darknet architecture
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     '''
-    def __init__(self, inputShape=(256, 256, 3), batchSize=1, latentSize=1000):
+    def __init__(self, inputShape=(256, 256, 3), batchSize=1,
+                 latentSize=1000, latentConstraints='bvae', latentCapacity=0):
+        self.latentConstraints = latentConstraints
+        self.latentCapacity = latentCapacity
         super().__init__(inputShape, batchSize, latentSize)
 
     def Build(self):
@@ -79,16 +88,17 @@ class Darknet19Encoder(Architecture):
         net = ConvBnLRelu(512, kernelSize=1)(net) # 17
         net = ConvBnLRelu(1024, kernelSize=3)(net) # 18
 
-        # imagenet output:
-        #net = self.Conv2D(filters=1000, kernel_size=(1, 1), padding='same')(net) # 19
-
         # variational encoder output (distributions)
-        mean = Conv2D(filters=self.latentSize, kernel_size=(1, 1), padding='same')(net)
+        mean = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
+                      padding='same')(net)
         mean = GlobalAveragePooling2D()(mean)
-        stdev = Conv2D(filters=self.latentSize, kernel_size=(1, 1), padding='same')(net)
-        stdev = GlobalAveragePooling2D()(stdev)
+        stddev = Conv2D(filters=self.latentSize, kernel_size=(1, 1),
+                        padding='same')(net)
+        stddev = GlobalAveragePooling2D()(stddev)
 
-        return Model(inputs=(inLayer), outputs=(mean, stdev))
+        sample = SampleLayer(self.latentConstraints, self.latentCapacity)([mean, stddev])
+
+        return Model(inputs=inLayer, outputs=sample)
 
 class Darknet19Decoder(Architecture):
     def __init__(self, inputShape=(256, 256, 3), batchSize=1, latentSize=1000):
@@ -139,7 +149,8 @@ class Darknet19Decoder(Architecture):
 
 class Darknet53Encoder(Architecture):
     '''
-    a larger, fully convolutional architecture inspried by pjreddie's darknet architecture
+    a larger, fully convolutional architecture inspried by
+        pjreddie's darknet architecture
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     https://github.com/pjreddie/darknet/blob/master/cfg/yolov3.cfg
     https://pjreddie.com/media/files/papers/YOLOv3.pdf
@@ -162,17 +173,6 @@ class Darknet53Encoder(Architecture):
         adds a darknet conv block to the net
         '''
         raise NotImplementedError('this architecture is not complete')
-
-class ConvBnLRelu(object):
-    def __init__(self, filters, kernelSize):
-        self.filters = filters
-        self.kernelSize = kernelSize
-    # return conv + bn + leaky_relu model
-    def __call__(self, net):
-        net = Conv2D(self.filters, self.kernelSize, padding='same')(net)
-        net = BatchNormalization()(net)
-        net = LeakyReLU()(net)
-        return net
 
 
 def test():
