@@ -8,8 +8,8 @@ THE UNLICENSE
 '''
 import tensorflow as tf
 from tensorflow.python.keras import Input
-from tensorflow.python.keras.layers import (InputLayer, Conv2D, Conv2DTranspose, 
-            BatchNormalization, LeakyReLU, MaxPool2D, UpSampling2D, 
+from tensorflow.python.keras.layers import (InputLayer, Conv2D, Conv2DTranspose,
+            BatchNormalization, LeakyReLU, MaxPool2D, UpSampling2D,
             Reshape, GlobalAveragePooling2D)
 from tensorflow.python.keras.models import Model
 

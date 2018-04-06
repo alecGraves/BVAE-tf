@@ -13,12 +13,13 @@ from tensorflow.python.keras.layers import (InputLayer, Conv2D, Conv2DTranspose,
 from tensorflow.python.keras import backend as K
 
 class ConvBnLRelu(object):
-    def __init__(self, filters, kernelSize):
+    def __init__(self, filters, kernelSize, strides=1):
         self.filters = filters
         self.kernelSize = kernelSize
+        self.strides = strides
     # return conv + bn + leaky_relu model
     def __call__(self, net):
-        net = Conv2D(self.filters, self.kernelSize, padding='same')(net)
+        net = Conv2D(self.filters, self.kernelSize, strides=self.strides, padding='same')(net)
         net = BatchNormalization()(net)
         net = LeakyReLU()(net)
         return net
