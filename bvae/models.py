@@ -51,8 +51,25 @@ class Darknet19Encoder(Architecture):
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     '''
     def __init__(self, inputShape=(256, 256, 3), batchSize=1,
-                 latentSize=1000, latentConstraints='bvae', beta=100, capacity=0):
+                 latentSize=1000, latentConstraints='bvae', beta=100., capacity=0.):
+        '''
+        params
+        -------
+        latentConstraints : string or None
+            Either 'bvae', 'vae', or None
+            Determines whether regularization is applied
+                to the latent space representation.
+        beta : float
+            beta > 1, used for 'bvae' latent_regularizer
+            (Unused if 'bvae' not selected, default 100)
+        capacity : float
+            used for 'bvae' to try to break input down to a set number
+                of basis. (e.g. at 25, the network will try to use 
+                25 dimensions of the latent space)
+            (unused if 'bvae' not selected)
+        '''
         self.latentConstraints = latentConstraints
+        self.beta = beta
         self.latentCapacity = capacity
         super().__init__(inputShape, batchSize, latentSize)
 
@@ -96,7 +113,7 @@ class Darknet19Encoder(Architecture):
                         padding='same')(net)
         stddev = GlobalAveragePooling2D()(stddev)
 
-        sample = SampleLayer(self.latentConstraints, self.latentCapacity)([mean, stddev])
+        sample = SampleLayer(self.latentConstraints, self.beta, self.latentCapacity)([mean, stddev])
 
         return Model(inputs=inLayer, outputs=sample)
 

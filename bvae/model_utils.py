@@ -38,18 +38,18 @@ class SampleLayer(Layer):
         ex.
             sample = SampleLayer('bvae', 16)([mean, stddev])
     '''
-    def __init__(self, latent_regularizer=None, beta=100, capacity=0, **kwargs):
+    def __init__(self, latent_regularizer=None, beta=100., capacity=0., **kwargs):
         '''
         args:
         ------
-        latent_regularizer: str or None
+        latent_regularizer : str or None
             Either 'bvae', 'vae', or None
             Determines whether regularization is applied
                 to the latent space representation.
-        beta: float
+        beta : float
             beta > 1, used for 'bvae' latent_regularizer,
             (Unused if 'bvae' not selected)
-        capacity: float
+        capacity : float
             used for 'bvae' to try to break input down to a set number
                 of basis. (e.g. at 25, the network will try to use 
                 25 dimensions of the latent space)

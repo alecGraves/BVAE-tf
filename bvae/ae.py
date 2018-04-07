@@ -34,10 +34,9 @@ def test():
     img.show()
 
     img = np.array(img, dtype=np.float32) / 255 - 0.5
-    # img = np.expand_dims(img, axis=0)
     img = np.array([img]*batchSize)
 
-    encoder = Darknet19Encoder(inputShape, batchSize, latentSize, 'bvae')
+    encoder = Darknet19Encoder(inputShape, batchSize, latentSize, 'bvae', beta=100, capacity=15)
     decoder = Darknet19Decoder(inputShape, batchSize, latentSize)
     ae = AutoEncoder(encoder, decoder)
 
