@@ -30,3 +30,5 @@ If you do not want to / cannot use conda, I am using tensorflow 1.4.0; see the e
 
 ## Demo
 For a simple demonstration, run ```ae.py``` in your terminal. This will cause the autoencoder to run on the included demo image.
+
+Note: The demo takes a few minutes on mu 1060 6GB, so it will take a while on a CPU...
