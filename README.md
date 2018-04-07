@@ -25,3 +25,6 @@ I am using conda to ensure the enviroment is easy to install
     2. Linux: ```source activate bvae-tf```
 
 If you do not want to / cannot use conda, I am using tensorflow 1.4.0; see the environment.yml for more package info.
+
+## Demo
+For a simple demonstration, run ```ae.py``` in your terminal. This will cause the autoencoder to run on the included demo image.
