@@ -1,7 +1,16 @@
 # BVAE-tf
 Disentangled Variational Auto-Encoder in TensorFlow (Beta-VAE)
-## Example Reconstructed Image:
+## Example Reconstructed Image
 ![alt text](https://github.com/shadySource/BVAE-tf/raw/master/images/reconstructed.png)
+
+## What has beed done
+* darknet 19 (fully convolutional & fast) encoder and decoder
+* Custom keras sampling layer for sampling the distribution of variational autoencoders
+* Custom loss in sampling layer for latent space regularization
+    * Options are no reg, vae reg (kl divergence), or bvae reg (beta*kl-divergence)
+    * You can also set a target capacity for dimension usage of the latent space
+* Simple interface for setting up your own VAE or B-VAE
+
 ## Enviroment Setup
 I am using conda to ensure the enviroment is easy to install
 
