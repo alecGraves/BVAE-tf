@@ -56,8 +56,8 @@ class Darknet19Encoder(Architecture):
         '''
         params
         -------
-        latentConstraints : string or None
-            Either 'bvae', 'vae', or None
+        latentConstraints : str
+            Either 'bvae', 'vae', or 'no'
             Determines whether regularization is applied
                 to the latent space representation.
         beta : float
@@ -167,7 +167,9 @@ class Darknet19Decoder(Architecture):
         net = UpSampling2D((2, 2))(net)
         net = ConvBnLRelu(64, kernelSize=1)(net)
         net = ConvBnLRelu(32, kernelSize=3)(net)
-        net = ConvBnLRelu(3, kernelSize=1)(net)
+        # net = ConvBnLRelu(3, kernelSize=1)(net)
+        net = Conv2D(filters=self.inputShape[-1], kernel_size=(1, 1),
+                      padding='same')(net)
 
         return Model(inLayer, net)
 
