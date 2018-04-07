@@ -30,7 +30,7 @@ def test():
     batchSize = 10
     latentSize = 1000
 
-    img = load_img(os.path.join('..', 'img.jpg'), target_size=inputShape[:-1])
+    img = load_img(os.path.join('..','images', 'img.jpg'), target_size=inputShape[:-1])
     img.show()
 
     img = np.array(img, dtype=np.float32) / 255 - 0.5
