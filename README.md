@@ -21,8 +21,10 @@ I am using conda to ensure the enviroment is easy to install
 1. Recreate the conda environment from the yml:
 ``` conda env create -f environment.yml ```
 2. Active the enviroment
-    1. Windows: ```activate bvae-tf```
+    1. Windows: go to cmd and ```activate bvae-tf```
     2. Linux: ```source activate bvae-tf```
+3. If you want to use CPU only, run ```pip uninstall tensorflow-gpu``` 
+followed by ```pip install tensorflow==1.4.0``` after you activate the environment.
 
 If you do not want to / cannot use conda, I am using tensorflow 1.4.0; see the environment.yml for more package info.
 
