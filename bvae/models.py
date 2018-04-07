@@ -51,7 +51,8 @@ class Darknet19Encoder(Architecture):
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     '''
     def __init__(self, inputShape=(256, 256, 3), batchSize=1,
-                 latentSize=1000, latentConstraints='bvae', beta=100., capacity=0.):
+                 latentSize=1000, latentConstraints='bvae', beta=100., capacity=0.,
+                 randomSample=True):
         '''
         params
         -------
@@ -67,10 +68,15 @@ class Darknet19Encoder(Architecture):
                 of basis. (e.g. at 25, the network will try to use 
                 25 dimensions of the latent space)
             (unused if 'bvae' not selected)
+        randomSample : bool
+            whether or not to use random sampling when selecting from distribution.
+            if false, the latent vector equals the mean, essentially turning this into a
+                standard autoencoder.
         '''
         self.latentConstraints = latentConstraints
         self.beta = beta
         self.latentCapacity = capacity
+        self.randomSample = randomSample
         super().__init__(inputShape, batchSize, latentSize)
 
     def Build(self):
@@ -113,7 +119,8 @@ class Darknet19Encoder(Architecture):
                         padding='same')(net)
         stddev = GlobalAveragePooling2D()(stddev)
 
-        sample = SampleLayer(self.latentConstraints, self.beta, self.latentCapacity)([mean, stddev])
+        sample = SampleLayer(self.latentConstraints, self.beta,
+                            self.latentCapacity, self.randomSample)([mean, stddev])
 
         return Model(inputs=inLayer, outputs=sample)
 

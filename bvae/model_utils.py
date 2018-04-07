@@ -38,7 +38,7 @@ class SampleLayer(Layer):
         ex.
             sample = SampleLayer('bvae', 16)([mean, stddev])
     '''
-    def __init__(self, latent_regularizer=None, beta=100., capacity=0., **kwargs):
+    def __init__(self, latent_regularizer=None, beta=100., capacity=0., randomSample=True, **kwargs):
         '''
         args:
         ------
@@ -54,6 +54,10 @@ class SampleLayer(Layer):
                 of basis. (e.g. at 25, the network will try to use 
                 25 dimensions of the latent space)
             (unused if 'bvae' not selected)
+        randomSample : bool
+            whether or not to use random sampling when selecting from distribution.
+            if false, the latent vector equals the mean, essentially turning this into a
+                standard autoencoder.
         ------
         ex.
             sample = SampleLayer('bvae', 16)([mean, stddev])
@@ -61,6 +65,7 @@ class SampleLayer(Layer):
         self.regularizer = latent_regularizer
         self.beta = beta
         self.capacity = capacity
+        self.random = randomSample
         super(SampleLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
@@ -96,8 +101,11 @@ class SampleLayer(Layer):
 
         epsilon = K.random_normal(shape=self.shape,
                               mean=0., stddev=1.)
-        # 'reparameterization trick':
-        return mean + K.exp(stddev) * epsilon
+        if self.random:
+            # 'reparameterization trick':
+            return mean + K.exp(stddev) * epsilon
+        else: # do not perform random sampling, simply grab the impulse value
+            return mean
 
     def compute_output_shape(self, input_shape):
         return input_shape[0]
