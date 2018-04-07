@@ -4,7 +4,7 @@ Disentangled Variational Auto-Encoder in TensorFlow (Beta-VAE)
 ## Example Reconstructed Image
 ![alt text](https://github.com/shadySource/BVAE-tf/raw/master/images/reconstructed.png)
 
-## What has beed done
+## What has been done
 * darknet 19 (fully convolutional & fast) encoder and decoder
 * Custom keras sampling layer for sampling the distribution of variational autoencoders
 * Custom loss in sampling layer for latent space regularization
