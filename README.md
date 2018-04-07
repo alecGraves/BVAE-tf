@@ -1,6 +1,7 @@
 # BVAE-tf
 Disentangled Variational Auto-Encoder in TensorFlow (Beta-VAE)
-
+## Example Reconstructed Image:
+![alt text](https://github.com/shadySource/BVAE-tf/raw/master/images/reconstructed.png)
 ## Enviroment Setup
 I am using conda to ensure the enviroment is easy to install
 
