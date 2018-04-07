@@ -10,6 +10,7 @@ Disentangled Variational Auto-Encoder in TensorFlow (Beta-VAE)
     * Options are no reg, vae reg (kl divergence), or bvae reg (beta*kl-divergence)
     * You can also set a target capacity for dimension usage of the latent space
 * Simple interface for setting up your own VAE or B-VAE
+    * See [the test function in ae.py](https://github.com/shadySource/BVAE-tf/blob/0374800376cf74f9ad2eb2f7d8cfeedfe71a4a17/bvae/ae.py#L22) for usage information
 
 ## Enviroment Setup
 I am using conda to ensure the enviroment is easy to install
