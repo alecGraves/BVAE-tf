@@ -1,6 +1,7 @@
 # BVAE-tf
 Disentangled Variational Auto-Encoder in TensorFlow (Beta-VAE)
-## Example Reconstructed Image
+#### :star: :boom: THE UNLICENSE :boom: :star:
+## Example Reconstructed Image :stars:
 ![alt text](https://github.com/shadySource/BVAE-tf/raw/master/images/reconstructed.png)
 
 ## What has beed done
