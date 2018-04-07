@@ -48,6 +48,7 @@ def test():
                     epochs=100,
                     batch_size=batchSize)
         
+        # example retrieving the latent vector
         latentVec = bvae.encoder.predict(img)[0]
         print(latentVec)
 
