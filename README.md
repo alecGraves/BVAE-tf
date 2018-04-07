@@ -13,4 +13,4 @@ I am using conda to ensure the enviroment is easy to install
     1. Windows: ```activate bvae-tf```
     2. Linux: ```source activate bvae-tf```
 
-If you do not want to / cannot use conda, I am using tensorflow 1.4.0; see the environment.yml for more pacckage info.
+If you do not want to / cannot use conda, I am using tensorflow 1.4.0; see the environment.yml for more package info.
