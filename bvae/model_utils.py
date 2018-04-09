@@ -39,29 +39,34 @@ class SampleLayer(Layer):
         ex.
             sample = SampleLayer('bvae', 16)([mean, stddev])
     '''
-    def __init__(self, latent_regularizer=None, beta=100, capacity=0, **kwargs):
+    def __init__(self, latent_regularizer='bvae', beta=100., capacity=0., randomSample=True, **kwargs):
         '''
         args:
         ------
-        latent_regularizer: str or None
-            Either 'bvae', 'vae', or None
+        latent_regularizer : str
+            Either 'bvae', 'vae', or 'no'
             Determines whether regularization is applied
                 to the latent space representation.
-        beta: float
+        beta : float
             beta > 1, used for 'bvae' latent_regularizer,
             (Unused if 'bvae' not selected)
-        capacity: float
+        capacity : float
             used for 'bvae' to try to break input down to a set number
                 of basis. (e.g. at 25, the network will try to use 
                 25 dimensions of the latent space)
             (unused if 'bvae' not selected)
+        randomSample : bool
+            whether or not to use random sampling when selecting from distribution.
+            if false, the latent vector equals the mean, essentially turning this into a
+                standard autoencoder.
         ------
         ex.
             sample = SampleLayer('bvae', 16)([mean, stddev])
         '''
-        self.regularizer = latent_regularizer
+        self.reg = latent_regularizer
         self.beta = beta
         self.capacity = capacity
+        self.random = randomSample
         super(SampleLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
@@ -79,7 +84,7 @@ class SampleLayer(Layer):
         mean = x[0]
         stddev = x[1]
 
-        if self.regularizer == 'bvae':
+        if self.reg == 'bvae':
             # kl divergence:
             latent_loss = -0.5 * K.mean(1 + stddev
                                 - K.square(mean)
@@ -88,7 +93,7 @@ class SampleLayer(Layer):
             # also try to use <capacity> dimensions of the space:
             latent_loss = self.beta * K.abs(latent_loss - self.capacity/self.shape.as_list()[1])
             self.add_loss(latent_loss, x)
-        if self.regularizer == 'vae':
+        elif self.reg == 'vae':
             # kl divergence:
             latent_loss = -0.5 * K.mean(1 + stddev
                                 - K.square(mean)
@@ -97,8 +102,11 @@ class SampleLayer(Layer):
 
         epsilon = K.random_normal(shape=self.shape,
                               mean=0., stddev=1.)
-        # 'reparameterization trick':
-        return mean + K.exp(stddev) * epsilon
+        if self.random:
+            # 'reparameterization trick':
+            return mean + K.exp(stddev) * epsilon
+        else: # do not perform random sampling, simply grab the impulse value
+            return mean + 0*stddev # Keras needs the *0 so the gradinent is not None
 
     def compute_output_shape(self, input_shape):
         return input_shape[0]

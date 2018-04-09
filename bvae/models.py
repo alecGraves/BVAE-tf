@@ -51,9 +51,32 @@ class Darknet19Encoder(Architecture):
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     '''
     def __init__(self, inputShape=(256, 256, 3), batchSize=1,
-                 latentSize=1000, latentConstraints='bvae', beta=100, capacity=0):
+                 latentSize=1000, latentConstraints='bvae', beta=100., capacity=0.,
+                 randomSample=True):
+        '''
+        params
+        -------
+        latentConstraints : str
+            Either 'bvae', 'vae', or 'no'
+            Determines whether regularization is applied
+                to the latent space representation.
+        beta : float
+            beta > 1, used for 'bvae' latent_regularizer
+            (Unused if 'bvae' not selected, default 100)
+        capacity : float
+            used for 'bvae' to try to break input down to a set number
+                of basis. (e.g. at 25, the network will try to use 
+                25 dimensions of the latent space)
+            (unused if 'bvae' not selected)
+        randomSample : bool
+            whether or not to use random sampling when selecting from distribution.
+            if false, the latent vector equals the mean, essentially turning this into a
+                standard autoencoder.
+        '''
         self.latentConstraints = latentConstraints
+        self.beta = beta
         self.latentCapacity = capacity
+        self.randomSample = randomSample
         super().__init__(inputShape, batchSize, latentSize)
 
     def Build(self):
@@ -96,7 +119,8 @@ class Darknet19Encoder(Architecture):
                         padding='same')(net)
         stddev = GlobalAveragePooling2D()(stddev)
 
-        sample = SampleLayer(self.latentConstraints, self.latentCapacity)([mean, stddev])
+        sample = SampleLayer(self.latentConstraints, self.beta,
+                            self.latentCapacity, self.randomSample)([mean, stddev])
 
         return Model(inputs=inLayer, outputs=sample)
 
@@ -143,7 +167,9 @@ class Darknet19Decoder(Architecture):
         net = UpSampling2D((2, 2))(net)
         net = ConvBnLRelu(64, kernelSize=1)(net)
         net = ConvBnLRelu(32, kernelSize=3)(net)
-        net = ConvBnLRelu(3, kernelSize=1)(net)
+        # net = ConvBnLRelu(3, kernelSize=1)(net)
+        net = Conv2D(filters=self.inputShape[-1], kernel_size=(1, 1),
+                      padding='same')(net)
 
         return Model(inLayer, net)
 
