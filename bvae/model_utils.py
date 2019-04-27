@@ -82,7 +82,11 @@ class SampleLayer(Layer):
             raise Exception('input shape is not a vector [batchSize, latentSize]')
 
         mean = x[0]
-        stddev = x[1]
+        stddev = K.abs(x[1])
+
+        # trick to allow setting batch at train/eval time
+        if x[0].shape[0].value == None:
+            return mean + 0*stddev
 
         if self.reg == 'bvae':
             # kl divergence:
@@ -91,7 +95,7 @@ class SampleLayer(Layer):
                                 - K.exp(stddev), axis=-1)
             # use beta to force less usage of vector space:
             # also try to use <capacity> dimensions of the space:
-            latent_loss = self.beta * K.abs(latent_loss - self.capacity/self.shape.as_list()[1])
+            latent_loss = self.beta * K.abs(latent_loss)
             self.add_loss(latent_loss, x)
         elif self.reg == 'vae':
             # kl divergence:

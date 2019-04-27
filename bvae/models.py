@@ -50,7 +50,7 @@ class Darknet19Encoder(Architecture):
         pjreddie's darknet architecture
     https://github.com/pjreddie/darknet/blob/master/cfg/darknet19.cfg
     '''
-    def __init__(self, inputShape=(256, 256, 3), batchSize=1,
+    def __init__(self, inputShape=(256, 256, 3), batchSize=None,
                  latentSize=1000, latentConstraints='bvae', beta=100., capacity=0.,
                  randomSample=True):
         '''
@@ -125,7 +125,7 @@ class Darknet19Encoder(Architecture):
         return Model(inputs=inLayer, outputs=sample)
 
 class Darknet19Decoder(Architecture):
-    def __init__(self, inputShape=(256, 256, 3), batchSize=1, latentSize=1000):
+    def __init__(self, inputShape=(256, 256, 3), batchSize=None, latentSize=1000):
         super().__init__(inputShape, batchSize, latentSize)
 
     def Build(self):

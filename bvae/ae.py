@@ -28,7 +28,7 @@ def test():
     from models import Darknet19Encoder, Darknet19Decoder
 
     inputShape = (256, 256, 3)
-    batchSize = 10
+    batchSize = 8
     latentSize = 100
 
     img = load_img(os.path.join('..','images', 'img.jpg'), target_size=inputShape[:-1])
@@ -38,8 +38,8 @@ def test():
     img = np.array([img]*batchSize) # make fake batches to improve GPU utilization
 
     # This is how you build the autoencoder
-    encoder = Darknet19Encoder(inputShape, batchSize, latentSize, 'bvae', beta=69, capacity=15, randomSample=True)
-    decoder = Darknet19Decoder(inputShape, batchSize, latentSize)
+    encoder = Darknet19Encoder(inputShape, latentSize=latentSize, latentConstraints='bvae', beta=69, capacity=15, randomSample=True)
+    decoder = Darknet19Decoder(inputShape, latentSize=latentSize)
     bvae = AutoEncoder(encoder, decoder)
 
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
@@ -47,7 +47,7 @@ def test():
         bvae.ae.fit(img, img,
                     epochs=100,
                     batch_size=batchSize)
-        
+
         # example retrieving the latent vector
         latentVec = bvae.encoder.predict(img)[0]
         print(latentVec)
