@@ -71,7 +71,6 @@ class SampleLayer(Layer):
 
     def build(self, input_shape):
         # save the shape for distribution sampling
-        self.shape = input_shape[0]
 
         super(SampleLayer, self).build(input_shape) # needed for layers
 
@@ -85,7 +84,7 @@ class SampleLayer(Layer):
         stddev = K.abs(x[1])
 
         # trick to allow setting batch at train/eval time
-        if x[0].shape[0].value == None:
+        if mean.shape[0].value == None or  stddev.shape[0].value == None:
             return mean + 0*stddev
 
         if self.reg == 'bvae':
@@ -104,7 +103,7 @@ class SampleLayer(Layer):
                                 - K.exp(stddev), axis=-1)
             self.add_loss(latent_loss, x)
 
-        epsilon = K.random_normal(shape=self.shape,
+        epsilon = K.random_normal(shape=stddev.shape,
                               mean=0., stddev=1.)
         if self.random:
             # 'reparameterization trick':
