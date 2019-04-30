@@ -67,6 +67,11 @@ class SampleLayer(Layer):
         self.beta = beta
         self.capacity = capacity
         self.random = randomSample
+        if K.image_data_format() == "channels_last":
+            self.sum_axis = -1
+        else:
+            self.sum_axis = 0
+
         super(SampleLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
@@ -89,25 +94,25 @@ class SampleLayer(Layer):
 
         if self.reg == 'bvae':
             # kl divergence:
-            latent_loss = -0.5 * K.mean(1 + stddev
+            latent_loss = -0.5 * K.mean(K.sum(1 + stddev
                                 - K.square(mean)
-                                - K.exp(stddev), axis=-1)
+                                - K.exp(stddev), axis=self.sum_axis))
             # use beta to force less usage of vector space:
             # also try to use <capacity> dimensions of the space:
             latent_loss = self.beta * K.abs(latent_loss)
             self.add_loss(latent_loss, x)
         elif self.reg == 'vae':
             # kl divergence:
-            latent_loss = -0.5 * K.mean(1 + stddev
+            latent_loss = -0.5 * K.mean(K.sum(1 + stddev
                                 - K.square(mean)
-                                - K.exp(stddev), axis=-1)
+                                - K.exp(stddev), axis=self.sum_axis))
             self.add_loss(latent_loss, x)
 
         epsilon = K.random_normal(shape=stddev.shape,
                               mean=0., stddev=1.)
         if self.random:
             # 'reparameterization trick':
-            return mean + K.exp(stddev) * epsilon
+            return mean + K.exp(stddev/2) * epsilon
         else: # do not perform random sampling, simply grab the impulse value
             return mean + 0*stddev # Keras needs the *0 so the gradinent is not None
 
