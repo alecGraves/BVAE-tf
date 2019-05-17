@@ -31,17 +31,20 @@ def test():
     batchSize = 8
     latentSize = 100
 
-    img = load_img(os.path.join('..','images', 'img.jpg'), target_size=inputShape[:-1])
+    img = load_img(os.path.join(os.path.dirname(__file__), '..','images', 'img.jpg'), target_size=inputShape[:-1])
     img.show()
 
-    img = np.array(img, dtype=np.float32) / 255 - 0.5
+    img = np.array(img, dtype=np.float32) * (2/255) - 1
+#     print(np.min(img))
+#     print(np.max(img))
+#     print(np.mean(img))
+
     img = np.array([img]*batchSize) # make fake batches to improve GPU utilization
 
     # This is how you build the autoencoder
-    encoder = Darknet19Encoder(inputShape, latentSize=latentSize, latentConstraints='bvae', beta=69, capacity=15, randomSample=True)
+    encoder = Darknet19Encoder(inputShape, latentSize=latentSize, latentConstraints='bvae', beta=69)
     decoder = Darknet19Decoder(inputShape, latentSize=latentSize)
     bvae = AutoEncoder(encoder, decoder)
-
     bvae.ae.compile(optimizer='adam', loss='mean_absolute_error')
     while True:
         bvae.ae.fit(img, img,
@@ -53,9 +56,7 @@ def test():
         print(latentVec)
 
         pred = bvae.ae.predict(img) # get the reconstructed image
-        pred[pred > 0.5] = 0.5 # clean it up a bit
-        pred[pred < -0.5] = -0.5
-        pred = np.uint8((pred + 0.5)* 255) # convert to regular image values
+        pred = np.uint8((pred + 1)* 255/2) # convert to regular image values
 
         pred = Image.fromarray(pred[0])
         pred.show() # display popup
