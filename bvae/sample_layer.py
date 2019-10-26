@@ -84,11 +84,11 @@ class SampleLayer(Layer):
 
         def reparameterization_trick():
             epsilon = K.random_normal(shape=logvar.shape,
-                              mean=0., logvar=1.)
+                              mean=0., stddev=1.)
             stddev = K.exp(logvar*0.5)
-            return mean + stddev * epsilon * inf
+            return mean + stddev * epsilon
 
-        return K.in_train_phase(reparameterization_trick, mean + 0*logvar, training=training)
+        return K.in_train_phase(reparameterization_trick, mean + 0*logvar, training=training) # TODO figure out why this is not working in the specified tf version???
 
     def compute_output_shape(self, input_shape):
         return input_shape[0]
